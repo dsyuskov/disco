@@ -1,9 +1,8 @@
 /* eslint-disable  */
-
-browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("Hello from the background");
-
-  // browser.tabs.executeScript({
-  //   file: "content-script.js",
-  // });
+chrome.extension.onMessage.addListener(function(request, sender, f_callback) {
+  if (request == "getUrl") {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tab) {
+      f_callback(tab);
+    });
+  }
 });

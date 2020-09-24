@@ -5,4 +5,5 @@ chrome.extension.onMessage.addListener(function(request, sender, f_callback) {
       f_callback(tab);
     });
   }
+  return true;
 });

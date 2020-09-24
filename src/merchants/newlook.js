@@ -1,20 +1,24 @@
 import axios from "axios";
 
 export default () => {
-  const products = [];
-  axios("https://www.newlook.com/uk/json/cart/currentCart.json").then(
+  const result = {
+    totalSum: 0,
+    entries: [],
+  };
+  axios(`https://www.newlook.com/uk/json/cart/currentCart.json`).then(
     (response) => {
+      result.totalSum = response.data.data.totalPrice.formattedValue;
       response.data.data.entries.forEach((item) => {
-        products.push({
+        result.entries.push({
           name: item.product.name,
           price: item.basePrice.formattedValue,
           totalPrice: item.totalPrice.formattedValue,
           sku: item.product.sku,
           quantity: item.quantity,
-          photo: "https:" + item.product.imageUrl,
+          photo: `https:${item.product.imageUrl}`,
         });
       });
     }
   );
-  return products;
+  return result;
 };

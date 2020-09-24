@@ -1,37 +1,48 @@
 <template>
   <div>
-    {{url}}
-    <Product v-for="product in products" v-bind:product="product" v-bind:key="product.sku" />
+    <div v-if="isParthner">
+      {{isLoading}}
+      <div v-if="basket.entries.length > 0" class="container">
+        <Product
+          class="container__product"
+          v-for="item in basket.entries"
+          v-bind:product="item"
+          v-bind:key="item.sku"
+        />
+      </div>
+      <Message v-else message="Ваша корзина пуста" />
+    </div>
+    <Message v-else message="Этот сайт не является партнером приложения" />
+    <div v-if="basket.entries.length > 0" class="total-sum">Total sum: {{basket.totalSum}}</div>
   </div>
 </template>
 
 <script>
-import newlook from "../merch/newlook";
-import joules from "../merch/joules";
-import currys from "../merch/currys";
-import Product from "@/components/product.vue";
+import stores from "../merchants/index";
+import Product from "@/components/Product.vue";
+import Message from "@/components/Message.vue";
 
 export default {
   name: "App",
-  components: { Product },
+  components: { Product, Message },
   data: () => {
     return {
-      products: [],
-      url: null
+      basket: {
+        totalSum: 0,
+        entries: []
+      },
+      isParthner: false
     };
   },
   created() {
-    chrome.extension.sendMessage("getUrl", back => {
+    chrome.extension.sendMessage("getUrl", async back => {
       const url = back[0].url;
-      this.url = url;
-      if (url.includes("newlook.com")) {
-        this.products = newlook();
-      }
-      if (url.includes("joules.com")) {
-        this.products = joules();
-      }
-      if (url.includes("currys.co.uk")) {
-        this.products = currys();
+      for (let key in stores) {
+        if (url.includes(stores[key].domain)) {
+          this.isParthner = true;
+          this.basket = await stores[key].products();
+          break;
+        }
       }
     });
   }
@@ -42,7 +53,28 @@ export default {
 html {
   box-sizing: border-box;
   padding: 10px;
-  width: 500px;
-  height: 400px;
+  width: 550px;
+}
+
+.container {
+  box-sizing: border-box;
+  max-height: 320px;
+  overflow-y: scroll;
+  padding-right: 10px;
+  width: 100%;
+}
+
+.container__product {
+  margin-bottom: 5px;
+}
+
+.total-sum {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 10px;
 }
 </style>
+

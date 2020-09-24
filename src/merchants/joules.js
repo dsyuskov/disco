@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export default () => {
+export default async () => {
   const result = {
     totalSum: 0,
     entries: [],
   };
-  axios(`https://www.joules.com/cart`).then((response) => {
+  await axios(`https://www.joules.com/cart`).then((response) => {
     const parser = new DOMParser();
     const document = parser.parseFromString(response.data, "text/html");
     (result.totalSum = document

@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export default () => {
+export default async () => {
   const result = {
     totalSum: 0,
     entries: [],
   };
-  axios(`https://www.newlook.com/uk/json/cart/currentCart.json`).then(
+  await axios(`https://www.newlook.com/uk/json/cart/currentCart.json`).then(
     (response) => {
       result.totalSum = response.data.data.totalPrice.formattedValue;
       response.data.data.entries.forEach((item) => {

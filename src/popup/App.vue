@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isParthner">
+    <div v-if="isPartner">
       <div v-if="basket.entries.length > 0" class="container">
         <Product
           class="container__product"
@@ -12,7 +12,9 @@
       <Message v-else v-bind:message="message" />
     </div>
     <Message v-else message="Этот сайт не является партнером приложения" />
-    <div v-if="basket.entries.length > 0" class="total-sum">Total sum: {{ basket.totalSum }}</div>
+    <div v-if="basket.entries.length > 0" class="total-sum">
+      Total sum: {{ basket.totalSum }}
+    </div>
   </div>
 </template>
 
@@ -28,10 +30,10 @@ export default {
     return {
       basket: {
         totalSum: 0,
-        entries: []
+        entries: [],
       },
-      isParthner: false,
-      isLoading: false
+      isPartner: false,
+      isLoading: false,
     };
   },
   computed: {
@@ -41,14 +43,14 @@ export default {
       } else {
         return "Ваша корзина пуста";
       }
-    }
+    },
   },
   created() {
-    chrome.extension.sendMessage("getUrl", async back => {
+    chrome.extension.sendMessage("getUrl", async (back) => {
       const url = back[0].url;
       for (let key in stores) {
         if (url.includes(stores[key].domain)) {
-          this.isParthner = true;
+          this.isPartner = true;
           this.isLoading = true;
           this.basket = await stores[key].products();
           this.isLoading = false;
@@ -56,7 +58,7 @@ export default {
         }
       }
     });
-  }
+  },
 };
 </script>
 
